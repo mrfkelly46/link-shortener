@@ -1,0 +1,11 @@
+DELIMITER //
+DROP PROCEDURE IF EXISTS getLinksByUser //
+
+CREATE PROCEDURE getLinksByUser(IN userID int)
+BEGIN
+
+  SELECT * FROM links WHERE users_id=userID;
+
+END //
+DELIMITER ;
+

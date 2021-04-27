@@ -1,0 +1,11 @@
+DELIMITER //
+DROP PROCEDURE IF EXISTS getLink //
+
+CREATE PROCEDURE getLink(IN linkID int)
+BEGIN
+
+  SELECT * FROM links WHERE id=linkID;
+
+END //
+DELIMITER ;
+

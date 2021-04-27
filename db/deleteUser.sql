@@ -1,0 +1,11 @@
+DELIMITER //
+DROP PROCEDURE IF EXISTS deleteUser //
+
+CREATE PROCEDURE deleteUser(IN userID INT)
+BEGIN
+
+  DELETE FROM users WHERE id=userID;
+
+END //
+DELIMITER ;
+

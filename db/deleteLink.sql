@@ -1,0 +1,11 @@
+DELIMITER //
+DROP PROCEDURE IF EXISTS deleteLink //
+
+CREATE PROCEDURE deleteLink(IN linkID int)
+BEGIN
+
+  DELETE FROM links WHERE id=linkID;
+
+END //
+DELIMITER ;
+

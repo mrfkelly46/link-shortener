@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Link Shortener API</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/10.16.2/sweetalert2.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="/static/style.css"/>
+
+    <style>
+    </style>
+
+  </head>
+  <body>
+
+    <div class="container mb-3" id="app">
+
+      <div class="text-center py-4 text-white">
+        <h1>Link Shortener API</h1>
+        <p><em>We make 'em short, so you dont have to!</em></p>
+
+        <div v-if="!authenticated" class="form-group text-center">
+          <input class="col-lg-4 mx-auto form-control" type="text" name="username" v-model="input.username" placeholder="Username"/>
+          <input class="col-lg-4 mx-auto form-control" type="password" name="password" v-model="input.password" placeholder="Password" @keyup.enter="login()"/>
+          <button class="col-lg-4 btn btn-success" type="button" v-on:click="login()">Login</button>
+        </div>
+
+        <div v-else class="text-center">
+          <button type="button" class="btn btn-outline-danger" v-on:click="logout()">Logout</button>
+        </div>
+      </div>
+
+      <div v-if="authenticated">
+        <div class="form-group col-lg-7 mx-auto">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Shorten a link</div>
+            </div>
+            <input class="col-lg-8 form-control" type="text" id="newLink" v-model="newLink.original_link" placeholder="Link to shorten" @keyup.enter="createLink()" autocomplete="off"/>
+            <div class="input-group-append">
+              <button type="button" class="btn btn-success" v-on:click="createLink()">Shorten!</button>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="links != null" id="linksList">
+          <ul class="list-group" style="overflow:hidden;">
+            <transition-group name="list" enter-active-class="animate__animated animate__backInUp" leave-active-class="animate__animated animate__backOutDown">
+              <li v-for="link in links" v-bind:key="link.id" class="list-group-item col-lg-7 mx-auto">
+                <div class="d-flex w-100 justify-content-between my-1">
+
+                  <div class="form-group flex-grow-1 mr-2 mb-0">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text shortened" v-on:click="copyLink(link.id)">{{link.shortened_link}}</div>
+                      </div>
+                      <input class="form-control" type="text" v-bind:id="'update-fld-'+link.id" v-model="link.original_link" placeholder="Link to shorten" @keyup.enter="updateLink(link.id)" @keyup.escape="disableEditLink(link.id, false)" autocomplete="off" disabled/>
+                      <div class="input-group-append">
+                        <button type="button" v-bind:id="'update-btn-'+link.id" class="btn btn-primary hidden" v-on:click="updateLink(link.id)">Update</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="btn-group-xs align-self-center">
+                    <button class="btn-utility hover-primary ml-2" v-on:click="enableEditLink(link.id)">
+                      <i class="far fa-edit"></i>
+                    </button>
+                    <button class="btn-utility hover-danger ml-2" v-on:click="deleteLink(link.id)">
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </div>
+
+                </div>
+              </li>
+            </transition-group>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/10.16.2/sweetalert2.min.js"></script>
+    <script type="text/javascript" src="/static/app.js"></script>
+
+  </body>
+</html>
+

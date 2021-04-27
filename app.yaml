@@ -1,0 +1,284 @@
+openapi: 3.0.0
+info:
+  title: Link Shortener API
+  description: This is a link shortener API for CS3103
+  version: '1.0'
+tags:
+  - name: Admin
+    description: Admin access only
+  - name: Registered
+    description: Registered users only
+  - name: Public
+    description: Open to anyone
+paths:
+  /login:
+    post:
+      tags: 
+        - Public
+      summary: Login to the API
+      description: Login to the API.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Successfully logged in
+        '403':
+          description: Login failed
+    get:
+      tags:
+        - Public
+      summary: Check if logged in to the API
+      descrption: Check if logged in to the API.
+      responses:
+        '200':
+          description: Logged in
+        '401':
+          description: Not logged in
+    delete:
+      tags: 
+        - Public
+      summary: Logout of the API
+      description: Logout of the API.
+      responses:
+        '200':
+          description: Successfully logged out
+        '401':
+          description: Was not logged in
+  /admin/users:
+    get:
+      tags: 
+        - Admin
+      security:
+        - cookieAuth: []
+      summary: Returns all users
+      description: Admin endpoint to view all users.
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Not logged in
+        '403':
+          description: Not authorized
+  /admin/links:
+    get:
+      tags: 
+        - Admin
+      security:
+        - cookieAuth: []
+      summary: Returns all shortened link records.
+      description: Admin endpoint to view all shortened link records.
+      responses:
+        '200':
+          description: List of shortened link records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+        '401':
+          description: Not logged in
+        '403':
+          description: Not authorized
+  /links:
+    get:
+      tags: 
+        - Registered
+      security:
+        - cookieAuth: []
+      summary: Returns all shortened link records belonging to the logged in user
+      description: Returns all shortened link records beloning to the logged in user.
+      responses:
+        '200':
+          description: List of shortened link records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+        '401':
+          description: Not logged in
+    post:
+      tags: 
+        - Registered
+      security:
+        - cookieAuth: []
+      summary: Creates a new shortened link
+      description: Authenticated users can POST a link they would like shortened. The backend creates this shortened link and stores it along with the user's ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OriginalLink'
+      responses:
+        '201':
+          description: Shortened link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+        '400':
+          description: Invalid input
+        '401':
+          description: Not logged in
+  /links/{linkID}:
+    get:
+      tags: 
+        - Registered
+      security:
+        - cookieAuth: []
+      summary: Retrieves a shortened link record 
+      description: Retrieves a shortened link record, provided that it belongs to the user.
+      parameters:
+        - name: linkID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved the shortened link record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+        '401':
+          description: Not logged in
+        '403':
+          description: Access forbidden (resource does not belong to the currently authenticated user)
+        '404':
+          description: Resource not found
+    patch:
+      tags:
+        - Registered
+      security:
+        - cookieAuth: []
+      summary: Updates a shortened link record 
+      description: Updates a shortened link record, provided that it belongs to the user. Only thing to change would be the original link.
+      parameters:
+        - name: linkID
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OriginalLink'
+      responses:
+        '200':
+          description: Successfully updated the shortened link record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+        '401':
+          description: Not logged in
+        '403':
+          description: Access forbidden (resource does not belong to the currently authenticated user)
+        '404':
+          description: Resource not found
+    delete:
+      tags:
+        - Registered
+      security:
+        - cookieAuth: []
+      summary: Deletes a shortened link record
+      description: Deletes a shortened link record, provided that is belongs to the currently authenticated user,
+      parameters:
+        - name: linkID
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successfully deleted the shortened link record
+        '401':
+          description: Not logged in
+        '403':
+          description: Access forbidden (resource does not belong to the currently authenticated user)
+        '404':
+          description: Resource not found
+  /l/{shortened}:
+    get:
+      tags:
+        - Public
+      summary: Redirects from the shortened link to the original link
+      description: Publicly available endpoint that redirects from the shortened link to the original link.
+      parameters:
+        - name: shortened
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Successfully redirected to the original link
+        '404':
+          description: Resource not found
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: cs3103_group_o_session
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 37
+        username:
+          type: string
+          example: mkelly3
+    Link:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 13
+        original_link:
+          type: string
+          example: https://www.example.com/path/to/resource.html
+        shortened_link:
+          type: string
+          example: v7tx3TZs
+        users_id:
+          type: integer
+          example: 37
+    Login:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: mkelly3
+        password:
+          type: string
+          example: password123
+    OriginalLink:
+      type: object
+      required:
+        - original
+      properties:
+        original_link:
+          type: string
+          example: https://www.example.com/path/to/resource.html

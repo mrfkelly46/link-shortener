@@ -1,0 +1,11 @@
+DELIMITER //
+DROP PROCEDURE IF EXISTS getAllLinks //
+
+CREATE PROCEDURE getAllLinks()
+BEGIN
+
+  SELECT * FROM links;
+
+END //
+DELIMITER ;
+

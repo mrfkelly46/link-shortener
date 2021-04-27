@@ -1,0 +1,40 @@
+html {
+  margin-left: calc(100vw - 100%);
+}
+
+body {
+  background-image: url("https://images.pexels.com/photos/1044990/pexels-photo-1044990.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260");
+}
+
+.hidden {
+  display: none !important;
+}
+
+.shortened {
+  font-family: monospace, monospace;
+  cursor: pointer;
+}
+.shortened:hover {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.btn-utility {
+  all: unset;
+  cursor: pointer;
+  outline: none !important;
+}
+
+.hover-primary:hover {
+  color: #007bff;
+}
+
+.hover-danger:hover {
+  color: #dc3545;
+}
+
+input:disabled {
+  background-color: unset !important;
+  cursor: text !important;
+}
+

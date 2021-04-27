@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+  id INT NOT NULL AUTO_INCREMENT,
+  username varchar(64) NOT NULL UNIQUE,
+  PRIMARY KEY (id)
+);
+
